@@ -1,0 +1,14 @@
+[
+  {
+    "CharacterName": "Armitage",
+    "CharacterDescription": "Call of Cthulu Librarian",
+    "CharacterQuote": "Charles!",
+    "ImageUrl": "https://tonbot.azurewebsites.net/images/Armitage.png"
+  },
+  {
+    "CharacterName": "Zucce",
+    "CharacterDescription": "Tales of Nowhere Listner",
+    "CharacterQuote": "I don't have an image, so here's Armitage!",
+    "ImageUrl": "https://tonbot.azurewebsites.net/images/Armitage.png"
+  }
+]
