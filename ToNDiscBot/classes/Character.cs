@@ -14,5 +14,6 @@ namespace ToNDiscBot.classes
         public string ImageUrl { get; set; }
         public string CharacterDescription { get; set; }
         public string CharacterQuote { get; set; }
+		public string Lore { get; set; }
     }
 }

@@ -14,7 +14,7 @@ namespace ToNDiscBot
     {
         DiscordSocketClient client;
         BotConfig botConfig = new BotConfig();
-        List<Character> characters;
+        Dictionary<string, Character> characters;
 
 
         public static void Main(string[] args)
@@ -56,65 +56,76 @@ namespace ToNDiscBot
             {
                 string msg = message.Content.Substring(1).ToLower();
 
-                string[] substring = msg.Split(" ");
-                foreach (string s in substring)
-                {
-                    Console.WriteLine(s);
-                }
+                string[] substring = msg.Split(" ", 2);
+                //foreach (string s in substring)
+                //{
+                //    Console.WriteLine(s);
+                //}
                 switch (substring[0])
                 {
-                    case "character":
-                        var builder = new EmbedBuilder()
+                    case "char":
+                        if (characters.TryGetValue(substring[1], out Character c))
                         {
-                            // Embed property can be set within object initializer
-                            //Title = "Hello world!",
-                            //Description = "I am a description set by initializer."
-                        };
-                        
-                        foreach (Character c in characters)
-                        {
-                            if (substring[1] == c.CharacterName.ToLower())
+                            var builder = new EmbedBuilder()
                             {
-                                Embed embed = builder.AddField("Name: ", $"{c.CharacterName}")
-                            .WithFooter(footer => footer.Text = $"{c.CharacterDescription}")
-                            .WithColor(Color.Blue)
-                            .WithTitle("Tales of Nowhere")
-                            .WithDescription($"Famous Saying: '{c.CharacterQuote}'")
-                            .WithImageUrl($"{c.ImageUrl}")
-                            .WithCurrentTimestamp()
-                            .Build();
-                                await message.Channel.SendMessageAsync(string.Empty, false, embed);
+                                Color = Color.Blue,
+                                Title = "Tales of Nowhere",
+                                Description = $"Famous Saying: '{c.CharacterQuote}'",
+                                ImageUrl = $"{c.ImageUrl}",
+                                Timestamp = DateTimeOffset.Now,
                             }
+                            .WithFooter(footer => footer.Text = $"{c.CharacterDescription}")
+                            .AddField("Name: ", $"{c.CharacterName}");
+
+
+                            await message.Channel.SendMessageAsync(c.Lore, false, builder.Build());
+                        }
+                        else
+                        {
+                            await message.Channel.SendMessageAsync($"Character '{substring[1]}' not found. Try '^list char' to see available characters.");
                         }
 
-                        //var builder = new EmbedBuilder();
-                        //builder.Title = "Hello world!";
-                        //builder.Description = "I am a description set by initializer.";
-
-                        // Or with methods
-                        //Embed embed = builder.AddField("Field title",
-                        //    "Field value. I also support [hyperlink markdown](https://example.com)!")
-                        //    .WithFooter(footer => footer.Text = "I am a footer.")
-                        //    .WithColor(Color.Blue)
-                        //    .WithTitle("I overwrote \"Hello world!\"")
-                        //    .WithDescription("I am a description.")
-                        //    .WithUrl("https://example.com")
-                        //    .WithImageUrl("http://machshare.azurewebsites.net/Mach.png")
-                        //    .WithCurrentTimestamp()
-                        //    .Build();
-
-                        //await message.Channel.SendMessageAsync(testChar.embed); //I know this isn't working yet. It's where I'm trying to call from.
-                        //await message.Channel.SendMessageAsync($"{message.Author.Mention} No!");
-                        //await message.Channel.SendFileAsync("..\\..\\..\\media\\images\\Armitage.png", "Armitage Relative");
-                        //await message.Channel.SendMessageAsync("This is text", false, embed);
-                        //await message.Channel.SendFileAsync("https://1drv.ms/u/s!AjBERSB_cyheuop804_3TgFapgUr5A", "Armitage URL");
-
+                        break;
+                    case "list":
+                        if (substring[1] == "char")
+                        {
+                            string output = "```\n";
+                            foreach (KeyValuePair<string, Character> kvp in characters)
+                            {
+                                //Character ch = kvp.Key;
+                                output += $"{kvp.Key.ToString()}\n";
+                            }
+                            output += "```";
+                            await message.Channel.SendMessageAsync(output);
+                        }
+                        else
+                        {
+                            await message.Channel.SendMessageAsync("Unknown list command");
+                        }
+                        break;
+                    case "help":
+                        if(substring.Length > 1)
+                        {
+                            await message.Channel.SendMessageAsync("Help Command Not Implemented");
+                        }
+                        else
+                        {
+                            string output = "```\n";
+                            output += "Command '^char charName' will show the trading card for that character\n";
+                            output += "Command '^list char' will list all of the currently available characters\n";
+                            output += "```";
+                            await message.Channel.SendMessageAsync(output);
+                        }
+                        break;
+                    default:
+                        // Send list of commands.
+                        await message.Channel.SendMessageAsync("Unknown command");
                         break;
                 }
             }
         }
 
-        public static void SetUp(ref BotConfig bc, ref List<Character> chars)
+        public static void SetUp(ref BotConfig bc, ref Dictionary<string, Character> chars)
         {
             JsonTextReader conf;
             try
@@ -142,37 +153,13 @@ namespace ToNDiscBot
             {
                 // This is good for development where I've got the config with the project
                 conf = new JsonTextReader(new StreamReader("..\\..\\..\\characters.json"));
-                chars = JsonConvert.DeserializeObject<List<Character>>(File.ReadAllText("..\\..\\..\\characters.json"));
+                chars = JsonConvert.DeserializeObject<Dictionary<string, Character>>(File.ReadAllText("..\\..\\..\\characters.json"));
             }
             catch (Exception e)
             {
                 Console.WriteLine($"Project Level Character[] Initilization Exception:\n\t{e.Message}");
             }
         }
-
-        //[Command("embed")]
-        //public async Task SendRichEmbedAsync()
-        //{
-        //    var embed = new EmbedBuilder
-        //    {
-        //        // Embed property can be set within object initializer
-        //        Title = "Hello world!",
-        //            Description = "I am a description set by initializer."
-        //    };
-        //    // Or with methods
-        //    embed.AddField("Field title",
-        //        "Field value. I also support [hyperlink markdown](https://example.com)!")
-        //        .WithAuthor(Context.Client.CurrentUser)
-        //        .WithFooter(footer => footer.Text = "I am a footer.")
-        //        .WithColor(Color.Blue)
-        //        .WithTitle("I overwrote \"Hello world!\"")
-        //        .WithDescription("I am a description.")
-        //        .WithUrl("https://example.com")
-        //        .WithCurrentTimestamp()
-        //        .Build();
-        //    //    await ReplyAsync(embed: embed);
-        //    await ReplyAsync(embed);
-        //}
-
+        
     }
 }

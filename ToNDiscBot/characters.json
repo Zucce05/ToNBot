@@ -1,14 +1,37 @@
-[
-  {
+{
+  "armitage": {
     "CharacterName": "Armitage",
     "CharacterDescription": "Call of Cthulu Librarian",
     "CharacterQuote": "Charles!",
-    "ImageUrl": "https://tonbot.azurewebsites.net/images/Armitage.png"
+    "ImageUrl": "https://tonbot.azurewebsites.net/images/Armitage.png",
+    "Lore": "Armitage apparently likes to say Charles and has nifty glasses."
   },
-  {
+  "zucce": {
     "CharacterName": "Zucce",
-    "CharacterDescription": "Tales of Nowhere Listner",
-    "CharacterQuote": "I don't have an image, so here's Armitage!",
-    "ImageUrl": "https://tonbot.azurewebsites.net/images/Armitage.png"
+    "CharacterDescription": "Tales of Nowhere Listener",
+    "CharacterQuote": "I don't have an image, so here's a freedom bird!",
+    "ImageUrl": "https://machshare.azurewebsites.net/bird.jpg",
+    "Lore": "This dude knows how to code LIKE A BOSS"
+  },
+  "gail": {
+    "CharacterName": "Gail Leann",
+    "CharacterDescription": "Great artist and assitant in Call of Cthulu",
+    "CharacterQuote": "I... uh... guess so",
+    "ImageUrl": "https://tonbot.azurewebsites.net/images/Gail_Leann.png",
+    "Lore": "She helps save the day."
+  },
+  "mack": {
+    "CharacterName": "Mack",
+    "CharacterDescription": "Mob friend to the Cthulu crowd",
+    "CharacterQuote": "Can I bring Black Betty?",
+    "ImageUrl": "http://tonbot.azurewebsites.net/images/mack.png",
+    "Lore": "He's got a bat."
+  },
+  "barbara": {
+    "CharacterName": "Barbara Wexler",
+    "CharacterDescription": "Tales of Nowhere Listener",
+    "CharacterQuote": "When Issac was born, he had an undescended testicle.",
+    "ImageUrl": "https://tonbot.azurewebsites.net/images/Barbara.png",
+    "Lore": "Issac's Call of Cthulu mother."
   }
-]
+}
