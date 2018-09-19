@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
-using Discord.Commands;
 using Discord.WebSocket;
 using Newtonsoft.Json;
 using ToNDiscBot.classes;
@@ -14,6 +14,8 @@ namespace ToNDiscBot
     {
         DiscordSocketClient client;
         BotConfig botConfig = new BotConfig();
+
+        Dictionary<string, Dictionary<string, IBotCalls>> commands;
         Dictionary<string, Character> characters;
 
 
@@ -30,7 +32,7 @@ namespace ToNDiscBot
                 //LogLegel = LogSeverity.Info
             });
 
-            SetUp(ref botConfig, ref characters);
+            SetUp(ref botConfig, ref characters, ref commands);
 
             client.Log += Log;
             string token = botConfig.Token;
@@ -66,19 +68,13 @@ namespace ToNDiscBot
                     case "char":
                         if (characters.TryGetValue(substring[1], out Character c))
                         {
-                            var builder = new EmbedBuilder()
-                            {
-                                Color = Color.Blue,
-                                Title = "Tales of Nowhere",
-                                Description = $"Famous Saying: '{c.CharacterQuote}'",
-                                ImageUrl = $"{c.ImageUrl}",
-                                Timestamp = DateTimeOffset.Now,
-                            }
-                            .WithFooter(footer => footer.Text = $"{c.CharacterDescription}")
-                            .AddField("Name: ", $"{c.CharacterName}");
-
-
-                            await message.Channel.SendMessageAsync(c.Lore, false, builder.Build());
+                            await MyEmbedBuilderAsync(c, message);
+                        }
+                        else if (substring[1] == "random")
+                        {
+                            Random rand = new Random();
+                            Character randChar = characters.ElementAt(rand.Next(0, characters.Count)).Value;
+                            await MyEmbedBuilderAsync(randChar, message);
                         }
                         else
                         {
@@ -104,7 +100,7 @@ namespace ToNDiscBot
                         }
                         break;
                     case "help":
-                        if(substring.Length > 1)
+                        if (substring.Length > 1)
                         {
                             await message.Channel.SendMessageAsync("Help Command Not Implemented");
                         }
@@ -125,13 +121,13 @@ namespace ToNDiscBot
             }
         }
 
-        public static void SetUp(ref BotConfig bc, ref Dictionary<string, Character> chars)
+        public static void SetUp(ref BotConfig bc, ref Dictionary<string, Character> chars, ref Dictionary<string, Dictionary<string, IBotCalls>> commands)
         {
-            JsonTextReader conf;
+            JsonTextReader reader;
             try
             {
                 // This is good for development where I've got the config with the project
-                conf = new JsonTextReader(new StreamReader("..\\..\\..\\BotConfig.json"));
+                reader = new JsonTextReader(new StreamReader("..\\..\\..\\BotConfig.json"));
                 bc = JsonConvert.DeserializeObject<BotConfig>(File.ReadAllText("..\\..\\..\\BotConfig.json"));
             }
             catch (Exception e)
@@ -152,13 +148,38 @@ namespace ToNDiscBot
             try
             {
                 // This is good for development where I've got the config with the project
-                conf = new JsonTextReader(new StreamReader("..\\..\\..\\characters.json"));
+                reader = new JsonTextReader(new StreamReader("..\\..\\..\\characters.json"));
                 chars = JsonConvert.DeserializeObject<Dictionary<string, Character>>(File.ReadAllText("..\\..\\..\\characters.json"));
+                
+                Dictionary<string, IBotCalls> temp = new Dictionary<string, IBotCalls>();
+
+				// loop through IBotCalls
+                foreach (KeyValuePair<string, Character> kvp in chars)
+                {
+                    temp.Add(kvp.Key, kvp.Value);
+                }
+				commands.Add("char", temp);
             }
             catch (Exception e)
             {
                 Console.WriteLine($"Project Level Character[] Initilization Exception:\n\t{e.Message}");
             }
+        }
+
+        public async Task MyEmbedBuilderAsync(Character c, SocketMessage message)
+        {
+            var builder = new EmbedBuilder()
+            {
+                Color = Color.Blue,
+                Title = "Tales of Nowhere",
+                Description = $"Famous Saying: '{c.CharacterQuote}'",
+                ImageUrl = $"{c.ImageUrl}",
+                Timestamp = DateTimeOffset.Now,
+            }
+                            .WithFooter(footer => footer.Text = $"{c.CharacterDescription}")
+                            .AddField("Name: ", $"{c.CharacterName}");
+            
+            await message.Channel.SendMessageAsync(c.Lore, false, builder.Build());
         }
         
     }
