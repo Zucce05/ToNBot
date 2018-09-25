@@ -6,13 +6,6 @@
     "ImageUrl": "https://tonbot.azurewebsites.net/images/Armitage.png",
     "Lore": "Armitage apparently likes to say Charles and has nifty glasses."
   },
-  "zucce": {
-    "CharacterName": "Zucce",
-    "CharacterDescription": "Tales of Nowhere Listener",
-    "CharacterQuote": "I don't have an image, so here's a freedom bird!",
-    "ImageUrl": "https://machshare.azurewebsites.net/bird.jpg",
-    "Lore": "This dude knows how to code LIKE A BOSS"
-  },
   "gail": {
     "CharacterName": "Gail Leann",
     "CharacterDescription": "Great artist and assitant in Call of Cthulu",
@@ -33,5 +26,26 @@
     "CharacterQuote": "When Issac was born, he had an undescended testicle.",
     "ImageUrl": "https://tonbot.azurewebsites.net/images/Barbara.png",
     "Lore": "Issac's Call of Cthulu mother."
+  },
+  "gemma": {
+    "CharacterName": "Gemma",
+    "CharacterDescription": "Starship Captain!",
+    "CharacterQuote": "No honor with a Wexler!",
+    "ImageUrl": "https://tonbot.azurewebsites.net/images/Gemma.png",
+    "Lore": "Pretty awesome outlaw"
+  },
+  "piersom": {
+    "CharacterName": "Piersom",
+    "CharacterDescription": "Armor wearing BAMF",
+    "CharacterQuote": "Help me fill this in",
+    "ImageUrl": "http://tonbot.azurewebsites.net/images/Piersom.png",
+    "Lore": "Help me fill this in"
+  },
+  "voola": {
+    "CharacterName": "Voola",
+    "CharacterDescription": "Original leader of the Hondonians",
+    "CharacterQuote": "Help me fill this in",
+    "ImageUrl": "https://tonbot.azurewebsites.net/images/Voola.png",
+    "Lore": "Tried to take over the world, starting with the UnderDark"
   }
 }

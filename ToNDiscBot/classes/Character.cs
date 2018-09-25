@@ -16,6 +16,8 @@ namespace ToNDiscBot.classes
         public string CharacterQuote { get; set; }
         public string Lore { get; set; }
         //public Color EmbedColor { get; set; }
+        public bool AllowRandom => true; // I think this syntax is allowed.  If it yells at you do the following line
+		// public bool AllowRandom {get { return true; } }
 
         public async Task SendChannelMessageAsync(SocketMessage message)
         {
