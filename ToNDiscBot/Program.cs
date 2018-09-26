@@ -17,6 +17,7 @@ namespace ToNDiscBot
 
         Dictionary<string, Dictionary<string, IBotCalls>> commands;
         Dictionary<string, Character> characters;
+        Dictionary<string, BotHelp> help;
 
 
         public static void Main(string[] args)
@@ -32,7 +33,7 @@ namespace ToNDiscBot
                 //LogLegel = LogSeverity.Info
             });
 
-            SetUp(ref botConfig, ref characters, ref commands);
+            SetUp(ref botConfig, ref characters, ref commands, ref help);
 
             client.Log += Log;
             string token = botConfig.Token;
@@ -65,110 +66,56 @@ namespace ToNDiscBot
                 //}
 
                 //Makes it here
-                if (commands.TryGetValue(substring[0], out Dictionary<string, IBotCalls> dict))
+                if (substring.Length != 1)
                 {
-                    // We now have the command dictionary (chars or whatever else)
-                    Console.WriteLine("here1");
-                    if (dict.TryGetValue(substring[1], out IBotCalls item))
+                    if (commands.TryGetValue(substring[0], out Dictionary<string, IBotCalls> dict))
                     {
-                        Console.WriteLine("here2");
-                        await item.SendChannelMessageAsync(message);
-                    }
-                    else
-                    {
-                        // Couldn't find the command.  Could it be random?
-						// If it's allowed, grab a random one.
-                        if (dict.Values.FirstOrDefault().AllowRandom && substring[1].ToLower().Equals("random"))
+                        // We now have the command dictionary (chars or whatever else)
+                        if (dict.TryGetValue(substring[1], out IBotCalls item))
                         {
-                            IBotCalls randomItem = dict.ElementAt(new Random().Next(dict.Count - 1)).Value;
-                            await randomItem.SendChannelMessageAsync(message);
+                            await item.SendChannelMessageAsync(message);
                         }
                         else
                         {
-							// Item not found.
-							// Send message the the item doesn't exist.  Possibly print item list?
+                            // Couldn't find the command.  Could it be random?
+                            // If it's allowed, grab a random one.
+                            if (dict.Values.FirstOrDefault().AllowRandom && substring[1].ToLower().Equals("random"))
+                            {
+                                IBotCalls randomItem = dict.ElementAt(new Random().Next(dict.Count - 1)).Value;
+                                await randomItem.SendChannelMessageAsync(message);
+                            }
+                            else if (substring[1].ToLower().Equals("list"))
+                            {
+                                string listOutput = "```\n";
+                                foreach (KeyValuePair<string, IBotCalls> key in dict)
+                                {
+                                    listOutput += $"{key.Key.ToString()}\n";
+                                }
+                                listOutput += "```";
+                                await message.Channel.SendMessageAsync(listOutput);
+                            }
+                            else
+                            {
+                                await message.Channel.SendMessageAsync($"Command {substring[1]} not found");
+                            }
                         }
+
+                    }
+                    else
+                    {
+                        // Command not found
+                        // Send message that the command is invalid.  Possibly print command list?
                     }
 
                 }
                 else
                 {
-					// Command not found
-					// Send message that the command is invalid.  Possibly print command list?
+                    await PrintDefaultHelpAsync(message);
                 }
-
-
-
-
-
-                // EXAMPLE TO GET A RANDOM CHARACTER FROM temp:
-                //IBotCalls randomChar = temp.Values.ElementAt(new Random().Next(sizeof(temp.Values - 1));
-                //randomChar.SendChannelMessageAsync("MESSAGE HERE");  // Obviously this line will fail since it's just a string and not a message.
-
-
-                // EXAMPLE FULL FLOW, THIS SHOULD BE MOVED
-
-
-            
-                //switch (substring[0])
-                //{
-                //    case "char":
-                //        if (characters.TryGetValue(substring[1], out Character c))
-                //        {
-                //            await MyEmbedBuilderAsync(c, message);
-                //        }
-                //        else if (substring[1] == "random")
-                //        {
-                //            Random rand = new Random();
-                //            Character randChar = characters.ElementAt(rand.Next(0, characters.Count)).Value;
-                //            await MyEmbedBuilderAsync(randChar, message);
-                //        }
-                //        else
-                //        {
-                //            await message.Channel.SendMessageAsync($"Character '{substring[1]}' not found. Try '^list char' to see available characters.");
-                //        }
-
-                //        break;
-                //    case "list":
-                //        if (substring[1] == "char")
-                //        {
-                //            string output = "```\n";
-                //            foreach (KeyValuePair<string, Character> kvp in characters)
-                //            {
-                //                //Character ch = kvp.Key;
-                //                output += $"{kvp.Key.ToString()}\n";
-                //            }
-                //            output += "```";
-                //            await message.Channel.SendMessageAsync(output);
-                //        }
-                //        else
-                //        {
-                //            await message.Channel.SendMessageAsync("Unknown list command");
-                //        }
-                //        break;
-                //    case "help":
-                //        if (substring.Length > 1)
-                //        {
-                //            await message.Channel.SendMessageAsync("Help Command Not Implemented");
-                //        }
-                //        else
-                //        {
-                //            string output = "```\n";
-                //            output += "Command '^char charName' will show the trading card for that character\n";
-                //            output += "Command '^list char' will list all of the currently available characters\n";
-                //            output += "```";
-                //            await message.Channel.SendMessageAsync(output);
-                //        }
-                //        break;
-                //    default:
-                //        // Send list of commands.
-                //        await message.Channel.SendMessageAsync("Unknown command");
-                //        break;
-                //}
             }
         }
 
-        public static void SetUp(ref BotConfig bc, ref Dictionary<string, Character> chars, ref Dictionary<string, Dictionary<string, IBotCalls>> commands)
+        public static void SetUp(ref BotConfig bc, ref Dictionary<string, Character> chars, ref Dictionary<string, Dictionary<string, IBotCalls>> commands, ref Dictionary<string, BotHelp> help)
         {
             JsonTextReader reader;
             try
@@ -214,26 +161,60 @@ namespace ToNDiscBot
                     Console.WriteLine($"Characters reading in error:\n\t{e.Message}");
                 }
 
-                Dictionary<string, IBotCalls> temp = new Dictionary<string, IBotCalls>();
+                Dictionary<string, IBotCalls> charTemp = new Dictionary<string, IBotCalls>();
 
-				// loop through IBotCalls
+                // loop through IBotCalls
                 foreach (KeyValuePair<string, Character> kvp in chars)
                 {
-                    temp.Add(kvp.Key, kvp.Value);
+                    charTemp.Add(kvp.Key, kvp.Value);
                 }
                 try
                 {
                     commands = new Dictionary<string, Dictionary<string, IBotCalls>>
                     {
-                        { "char", temp }
+                        { "char", charTemp }
                     };
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
-                    Console.WriteLine($"commands.Add Level Error:\n\t{e}");
+                    Console.WriteLine($"commands.Add character Level Error:\n\t{e}");
                 }
-				// TODO: Add the other dictionaries as well.
-				// TODO: DOn't pass in all the dictionaries by hand.  Make it data driven (I can help with that)
+                // TODO: Add the other dictionaries as well.
+                // TODO: DOn't pass in all the dictionaries by hand.  Make it data driven (I can help with that)
+                try
+                {
+                    reader = new JsonTextReader(new StreamReader("..\\..\\..\\botHelp.json"));
+                    help = JsonConvert.DeserializeObject<Dictionary<string, BotHelp>>(File.ReadAllText("..\\..\\..\\botHelp.json"));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"botHelp reading in error:\n\t{e.Message}");
+                }
+                try
+                {
+                    reader = new JsonTextReader(new StreamReader("botHelp.json"));
+                    help = JsonConvert.DeserializeObject<Dictionary<string, BotHelp>>(File.ReadAllText("botHelp.json"));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"botHelp reading in error:\n\t{e.Message}");
+                }
+
+                Dictionary<string, IBotCalls> botHelptemp = new Dictionary<string, IBotCalls>();
+
+                // loop through IBotCalls
+                foreach (KeyValuePair<string, BotHelp> kvp in help)
+                {
+                    botHelptemp.Add(kvp.Key, kvp.Value);
+                }
+                try
+                {
+                    commands.TryAdd("help", botHelptemp);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"commands.Add botHelp Level Error:\n\t{e}");
+                }
 
             }
             catch (Exception e)
@@ -242,21 +223,20 @@ namespace ToNDiscBot
             }
         }
 
-        public async Task MyEmbedBuilderAsync(Character c, SocketMessage message)
+        public static async Task PrintDefaultHelpAsync(SocketMessage msg)
         {
             var builder = new EmbedBuilder()
             {
                 Color = Color.Blue,
-                Title = "Tales of Nowhere",
-                Description = $"Famous Saying: '{c.CharacterQuote}'",
-                ImageUrl = $"{c.ImageUrl}",
+                Title = "ToN Help",
+                Description = $"Use ^help <command> for a description of what parameters that command can take",
                 Timestamp = DateTimeOffset.Now,
             }
-                            .WithFooter(footer => footer.Text = $"{c.CharacterDescription}")
-                            .AddField("Name: ", $"{c.CharacterName}");
-            
-            await message.Channel.SendMessageAsync(c.Lore, false, builder.Build());
+                            .AddField($"Example: ", $"``^help char``\n``^help list``");
+
+            await msg.Channel.SendMessageAsync(string.Empty, false, builder.Build());
         }
-        
+
+
     }
 }

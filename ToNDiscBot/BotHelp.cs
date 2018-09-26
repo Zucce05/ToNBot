@@ -1,18 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
+using Discord;
 using Discord.WebSocket;
 
 namespace ToNDiscBot
 {
-    class BotHelp : IBotCalls
+    public class BotHelp : IBotCalls
     {
         public bool AllowRandom => false;
+        public string HelpDescription { get; set; }
+        public string HelpExample { get; set; }
 
-        public Task SendChannelMessageAsync(SocketMessage message)
+        public async Task SendChannelMessageAsync(SocketMessage message)
         {
-            throw new NotImplementedException();
+            var builder = new EmbedBuilder()
+            {
+                Color = Color.Blue,
+                Title = "ToN Help",
+                Description = $"{this.HelpDescription}",
+                Timestamp = DateTimeOffset.Now,
+            }
+                            .AddField("Example: ", $"{this.HelpExample}");
+
+            await message.Channel.SendMessageAsync(string.Empty, false, builder.Build());
         }
     }
 }
