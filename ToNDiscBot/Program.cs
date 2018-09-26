@@ -17,6 +17,7 @@ namespace ToNDiscBot
 
         Dictionary<string, Dictionary<string, IBotCalls>> commands;
         Dictionary<string, Character> characters;
+        Dictionary<string, BotHelp> help;
 
 
         public static void Main(string[] args)
@@ -32,7 +33,7 @@ namespace ToNDiscBot
                 //LogLegel = LogSeverity.Info
             });
 
-            SetUp(ref botConfig, ref characters, ref commands);
+            SetUp(ref botConfig, ref characters, ref commands, ref help);
 
             client.Log += Log;
             string token = botConfig.Token;
@@ -63,65 +64,58 @@ namespace ToNDiscBot
                 //{
                 //    Console.WriteLine(s);
                 //}
-                switch (substring[0])
+
+                //Makes it here
+                if (substring.Length != 1)
                 {
-                    case "char":
-                        if (characters.TryGetValue(substring[1], out Character c))
+                    if (commands.TryGetValue(substring[0], out Dictionary<string, IBotCalls> dict))
+                    {
+                        // We now have the command dictionary (chars or whatever else)
+                        if (dict.TryGetValue(substring[1], out IBotCalls item))
                         {
-                            await MyEmbedBuilderAsync(c, message);
-                        }
-                        else if (substring[1] == "random")
-                        {
-                            Random rand = new Random();
-                            Character randChar = characters.ElementAt(rand.Next(0, characters.Count)).Value;
-                            await MyEmbedBuilderAsync(randChar, message);
+                            await item.SendChannelMessageAsync(message);
                         }
                         else
                         {
-                            await message.Channel.SendMessageAsync($"Character '{substring[1]}' not found. Try '^list char' to see available characters.");
+                            // Couldn't find the command.  Could it be random?
+                            // If it's allowed, grab a random one.
+                            if (dict.Values.FirstOrDefault().AllowRandom && substring[1].ToLower().Equals("random"))
+                            {
+                                IBotCalls randomItem = dict.ElementAt(new Random().Next(dict.Count - 1)).Value;
+                                await randomItem.SendChannelMessageAsync(message);
+                            }
+                            else if (substring[1].ToLower().Equals("list"))
+                            {
+                                string listOutput = "```\n";
+                                foreach (KeyValuePair<string, IBotCalls> key in dict)
+                                {
+                                    listOutput += $"{key.Key.ToString()}\n";
+                                }
+                                listOutput += "```";
+                                await message.Channel.SendMessageAsync(listOutput);
+                            }
+                            else
+                            {
+                                await message.Channel.SendMessageAsync($"Command {substring[1]} not found");
+                            }
                         }
 
-                        break;
-                    case "list":
-                        if (substring[1] == "char")
-                        {
-                            string output = "```\n";
-                            foreach (KeyValuePair<string, Character> kvp in characters)
-                            {
-                                //Character ch = kvp.Key;
-                                output += $"{kvp.Key.ToString()}\n";
-                            }
-                            output += "```";
-                            await message.Channel.SendMessageAsync(output);
-                        }
-                        else
-                        {
-                            await message.Channel.SendMessageAsync("Unknown list command");
-                        }
-                        break;
-                    case "help":
-                        if (substring.Length > 1)
-                        {
-                            await message.Channel.SendMessageAsync("Help Command Not Implemented");
-                        }
-                        else
-                        {
-                            string output = "```\n";
-                            output += "Command '^char charName' will show the trading card for that character\n";
-                            output += "Command '^list char' will list all of the currently available characters\n";
-                            output += "```";
-                            await message.Channel.SendMessageAsync(output);
-                        }
-                        break;
-                    default:
-                        // Send list of commands.
-                        await message.Channel.SendMessageAsync("Unknown command");
-                        break;
+                    }
+                    else
+                    {
+                        // Command not found
+                        // Send message that the command is invalid.  Possibly print command list?
+                    }
+
+                }
+                else
+                {
+                    await PrintDefaultHelpAsync(message);
                 }
             }
         }
 
-        public static void SetUp(ref BotConfig bc, ref Dictionary<string, Character> chars, ref Dictionary<string, Dictionary<string, IBotCalls>> commands)
+        public static void SetUp(ref BotConfig bc, ref Dictionary<string, Character> chars, ref Dictionary<string, Dictionary<string, IBotCalls>> commands, ref Dictionary<string, BotHelp> help)
         {
             JsonTextReader reader;
             try
@@ -134,31 +128,94 @@ namespace ToNDiscBot
             {
                 Console.WriteLine($"Project Level SetUp Exception:\n\t{e.Message}");
             }
-            //try
-            //{
-            //    // This is good for deployment where I've got the config with the executable
-            //    conf = new JsonTextReader(new StreamReader("BotConfig.json"));
-            //    bc = JsonConvert.DeserializeObject<BotConfig>(File.ReadAllText("BotConfig.json"));
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine($"Executable Level SetUp Exception:\n\t{e.Message}");
-            //}
+            try
+            {
+                // This is good for deployment where I've got the config with the executable
+                reader = new JsonTextReader(new StreamReader("BotConfig.json"));
+                bc = JsonConvert.DeserializeObject<BotConfig>(File.ReadAllText("BotConfig.json"));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Executable Level SetUp Exception:\n\t{e.Message}");
+            }
 
             try
             {
                 // This is good for development where I've got the config with the project
-                reader = new JsonTextReader(new StreamReader("..\\..\\..\\characters.json"));
-                chars = JsonConvert.DeserializeObject<Dictionary<string, Character>>(File.ReadAllText("..\\..\\..\\characters.json"));
-                
-                Dictionary<string, IBotCalls> temp = new Dictionary<string, IBotCalls>();
+                try
+                {
+                    reader = new JsonTextReader(new StreamReader("..\\..\\..\\characters.json"));
+                    chars = JsonConvert.DeserializeObject<Dictionary<string, Character>>(File.ReadAllText("..\\..\\..\\characters.json"));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Characters reading in error:\n\t{e.Message}");
+                }
+                try
+                {
+                    reader = new JsonTextReader(new StreamReader("characters.json"));
+                    chars = JsonConvert.DeserializeObject<Dictionary<string, Character>>(File.ReadAllText("characters.json"));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Characters reading in error:\n\t{e.Message}");
+                }
 
-				// loop through IBotCalls
+                Dictionary<string, IBotCalls> charTemp = new Dictionary<string, IBotCalls>();
+
+                // loop through IBotCalls
                 foreach (KeyValuePair<string, Character> kvp in chars)
                 {
-                    temp.Add(kvp.Key, kvp.Value);
+                    charTemp.Add(kvp.Key, kvp.Value);
                 }
-				commands.Add("char", temp);
+                try
+                {
+                    commands = new Dictionary<string, Dictionary<string, IBotCalls>>
+                    {
+                        { "char", charTemp }
+                    };
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"commands.Add character Level Error:\n\t{e}");
+                }
+                // TODO: Add the other dictionaries as well.
+                // TODO: DOn't pass in all the dictionaries by hand.  Make it data driven (I can help with that)
+                try
+                {
+                    reader = new JsonTextReader(new StreamReader("..\\..\\..\\botHelp.json"));
+                    help = JsonConvert.DeserializeObject<Dictionary<string, BotHelp>>(File.ReadAllText("..\\..\\..\\botHelp.json"));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"botHelp reading in error:\n\t{e.Message}");
+                }
+                try
+                {
+                    reader = new JsonTextReader(new StreamReader("botHelp.json"));
+                    help = JsonConvert.DeserializeObject<Dictionary<string, BotHelp>>(File.ReadAllText("botHelp.json"));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"botHelp reading in error:\n\t{e.Message}");
+                }
+
+                Dictionary<string, IBotCalls> botHelptemp = new Dictionary<string, IBotCalls>();
+
+                // loop through IBotCalls
+                foreach (KeyValuePair<string, BotHelp> kvp in help)
+                {
+                    botHelptemp.Add(kvp.Key, kvp.Value);
+                }
+                try
+                {
+                    commands.TryAdd("help", botHelptemp);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"commands.Add botHelp Level Error:\n\t{e}");
+                }
+
             }
             catch (Exception e)
             {
@@ -166,21 +223,20 @@ namespace ToNDiscBot
             }
         }
 
-        public async Task MyEmbedBuilderAsync(Character c, SocketMessage message)
+        public static async Task PrintDefaultHelpAsync(SocketMessage msg)
         {
             var builder = new EmbedBuilder()
             {
                 Color = Color.Blue,
-                Title = "Tales of Nowhere",
-                Description = $"Famous Saying: '{c.CharacterQuote}'",
-                ImageUrl = $"{c.ImageUrl}",
+                Title = "ToN Help",
+                Description = $"Use ^help <command> for a description of what parameters that command can take",
                 Timestamp = DateTimeOffset.Now,
             }
-                            .WithFooter(footer => footer.Text = $"{c.CharacterDescription}")
-                            .AddField("Name: ", $"{c.CharacterName}");
-            
-            await message.Channel.SendMessageAsync(c.Lore, false, builder.Build());
+                            .AddField($"Example: ", $"``^help char``\n``^help list``");
+
+            await msg.Channel.SendMessageAsync(string.Empty, false, builder.Build());
         }
-        
+
+
     }
 }
