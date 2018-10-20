@@ -120,19 +120,9 @@ namespace ToNDiscBot
             JsonTextReader reader;
             try
             {
-                // This is good for development where I've got the config with the project
-                reader = new JsonTextReader(new StreamReader("..\\..\\..\\BotConfig.json"));
-                bc = JsonConvert.DeserializeObject<BotConfig>(File.ReadAllText("..\\..\\..\\BotConfig.json"));
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Project Level SetUp Exception:\n\t{e.Message}");
-            }
-            try
-            {
                 // This is good for deployment where I've got the config with the executable
-                reader = new JsonTextReader(new StreamReader("BotConfig.json"));
-                bc = JsonConvert.DeserializeObject<BotConfig>(File.ReadAllText("BotConfig.json"));
+                reader = new JsonTextReader(new StreamReader("json\\BotConfig.json"));
+                bc = JsonConvert.DeserializeObject<BotConfig>(File.ReadAllText("json\\BotConfig.json"));
             }
             catch (Exception e)
             {
@@ -141,20 +131,10 @@ namespace ToNDiscBot
 
             try
             {
-                // This is good for development where I've got the config with the project
                 try
                 {
-                    reader = new JsonTextReader(new StreamReader("..\\..\\..\\characters.json"));
-                    chars = JsonConvert.DeserializeObject<Dictionary<string, Character>>(File.ReadAllText("..\\..\\..\\characters.json"));
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine($"Characters reading in error:\n\t{e.Message}");
-                }
-                try
-                {
-                    reader = new JsonTextReader(new StreamReader("characters.json"));
-                    chars = JsonConvert.DeserializeObject<Dictionary<string, Character>>(File.ReadAllText("characters.json"));
+                    reader = new JsonTextReader(new StreamReader("json\\characters.json"));
+                    chars = JsonConvert.DeserializeObject<Dictionary<string, Character>>(File.ReadAllText("json\\characters.json"));
                 }
                 catch (Exception e)
                 {
@@ -179,21 +159,10 @@ namespace ToNDiscBot
                 {
                     Console.WriteLine($"commands.Add character Level Error:\n\t{e}");
                 }
-                // TODO: Add the other dictionaries as well.
-                // TODO: DOn't pass in all the dictionaries by hand.  Make it data driven (I can help with that)
                 try
                 {
-                    reader = new JsonTextReader(new StreamReader("..\\..\\..\\botHelp.json"));
-                    help = JsonConvert.DeserializeObject<Dictionary<string, BotHelp>>(File.ReadAllText("..\\..\\..\\botHelp.json"));
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine($"botHelp reading in error:\n\t{e.Message}");
-                }
-                try
-                {
-                    reader = new JsonTextReader(new StreamReader("botHelp.json"));
-                    help = JsonConvert.DeserializeObject<Dictionary<string, BotHelp>>(File.ReadAllText("botHelp.json"));
+                    reader = new JsonTextReader(new StreamReader("json\\botHelp.json"));
+                    help = JsonConvert.DeserializeObject<Dictionary<string, BotHelp>>(File.ReadAllText("json\\botHelp.json"));
                 }
                 catch (Exception e)
                 {
