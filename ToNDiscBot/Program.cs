@@ -18,6 +18,7 @@ namespace ToNDiscBot
         Dictionary<string, Dictionary<string, IBotCalls>> commands;
         Dictionary<string, Character> characters;
         Dictionary<string, BotHelp> help;
+        const string PREFIX = ";";
 
 
         public static void Main(string[] args)
@@ -55,7 +56,7 @@ namespace ToNDiscBot
 
         private async Task MessageReceived(SocketMessage message)
         {
-            if (message.Content.StartsWith("^"))
+            if (message.Content.StartsWith(PREFIX))
             {
                 string msg = message.Content.Substring(1).ToLower();
 
@@ -198,10 +199,10 @@ namespace ToNDiscBot
             {
                 Color = Color.Blue,
                 Title = "ToN Help",
-                Description = $"Use ^help <command> for a description of what parameters that command can take",
+                Description = $"Use {PREFIX}help <command> for a description of what parameters that command can take",
                 Timestamp = DateTimeOffset.Now,
             }
-                            .AddField($"Example: ", $"``^help char``\n``^help list``");
+                            .AddField($"Example: ", $"``{PREFIX}help char``\n``{PREFIX}help list``");
 
             await msg.Channel.SendMessageAsync(string.Empty, false, builder.Build());
         }
