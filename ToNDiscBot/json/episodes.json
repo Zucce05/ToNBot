@@ -1,0 +1,26 @@
+{
+  "1": {
+    "EpisodeTitle": "S1E01 - Arrival, Part One",
+    "EpisodeDescription": "Four strangers awaken in a mysterious coffee shop. They've been saved from death by an eccentric scientist and enlisted in his quest to repair the multiverse. What happens next? Now that's a tale worth telling.",
+    "EpisodeLength": "57:48",
+    //"ImageUrl": "https://cdn.discordapp.com/attachments/540649641193242635/644340860930228224/Armitage.png",
+    "NPCs": "Copernicus Stratt; Angie;",
+    "Ruleset": "??"
+  },
+  "2": {
+    "EpisodeTitle": "S1E02 - Arrival, Part Two",
+    "EpisodeDescription": "More deaths are remembered as The Players stay the night in the Cafe, and prepare for the first journey to another universe.",
+    "EpisodeLength": "48:26",
+    //"ImageUrl": "https://cdn.discordapp.com/attachments/540649641193242635/644340860930228224/Armitage.png",
+    "NPCs": "Copernicus Stratt; Angie;",
+    "Ruleset": "??"
+  },
+  "3": {
+    "EpisodeTitle": "S1E03 - Market Day",
+    "EpisodeDescription": "On leaving the Cafe, The Players wind up in a world none of them are familiar with. There are people with strange clothing, entire species that didn't exist in their lives before, and they just happen to arrive on the day a local town is celebrating Market Day. The customs are odd, but at least the food is good. And is that...over on the horizon, do you see it? Could it be the entrance to a Dungeon? Or maybe it's a Dragon, resting in the valley.",
+    "EpisodeLength": "35:39",
+    //"ImageUrl": "https://cdn.discordapp.com/attachments/540649641193242635/644340860930228224/Armitage.png",
+    "NPCs": "Bubda;",
+    "Ruleset":  "Dungeons and Dragons 5e"
+  }
+}

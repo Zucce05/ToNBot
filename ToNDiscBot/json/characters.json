@@ -3,49 +3,49 @@
     "CharacterName": "Armitage",
     "CharacterDescription": "Call of Cthulu Librarian",
     "CharacterQuote": "Charles!",
-    "ImageUrl": "https://tonbot.azurewebsites.net/images/Armitage.png",
+    "ImageUrl": "https://cdn.discordapp.com/attachments/540649641193242635/644340860930228224/Armitage.png",
     "Lore": "Armitage apparently likes to say Charles and has nifty glasses."
   },
   "gail": {
     "CharacterName": "Gail Leann",
     "CharacterDescription": "Great artist and assitant in Call of Cthulu",
     "CharacterQuote": "I... uh... guess so",
-    "ImageUrl": "https://tonbot.azurewebsites.net/images/Gail_Leann.png",
+    "ImageUrl": "https://cdn.discordapp.com/attachments/540649641193242635/644347135743229983/Gail_Leann.png",
     "Lore": "She helps save the day."
   },
   "mack": {
     "CharacterName": "Mack",
     "CharacterDescription": "Mob friend to the Cthulu crowd",
     "CharacterQuote": "Can I bring Black Betty?",
-    "ImageUrl": "http://tonbot.azurewebsites.net/images/mack.png",
+    "ImageUrl": "https://cdn.discordapp.com/attachments/540649641193242635/644347197206429696/Mack.png",
     "Lore": "He's got a bat."
   },
   "barbara": {
     "CharacterName": "Barbara Wexler",
     "CharacterDescription": "Tales of Nowhere Listener",
     "CharacterQuote": "When Issac was born, he had an undescended testicle.",
-    "ImageUrl": "https://tonbot.azurewebsites.net/images/Barbara.png",
-    "Lore": "Issac's Call of Cthulu mother."
+    "ImageUrl": "https://cdn.discordapp.com/attachments/540649641193242635/644347252789346327/Barbara.png",
+    "Lore": "Issac's Call of Cthulhu mother."
   },
   "gemma": {
     "CharacterName": "Gemma",
     "CharacterDescription": "Starship Captain!",
     "CharacterQuote": "No honor with a Wexler!",
-    "ImageUrl": "https://tonbot.azurewebsites.net/images/Gemma.png",
+    "ImageUrl": "https://cdn.discordapp.com/attachments/540649641193242635/644347315439665153/Gemma.png",
     "Lore": "Pretty awesome outlaw"
   },
   "piersom": {
     "CharacterName": "Piersom",
     "CharacterDescription": "Armor wearing BAMF",
     "CharacterQuote": "Help me fill this in",
-    "ImageUrl": "http://tonbot.azurewebsites.net/images/Piersom.png",
+    "ImageUrl": "https://cdn.discordapp.com/attachments/540649641193242635/644347377100259378/Piersom.png",
     "Lore": "Help me fill this in"
   },
   "voola": {
     "CharacterName": "Voola",
     "CharacterDescription": "Original leader of the Hondonians",
     "CharacterQuote": "Help me fill this in",
-    "ImageUrl": "https://tonbot.azurewebsites.net/images/Voola.png",
+    "ImageUrl": "https://cdn.discordapp.com/attachments/540649641193242635/644347428082024450/Voola.png",
     "Lore": "Tried to take over the world, starting with the UnderDark"
   }
 }

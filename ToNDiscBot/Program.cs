@@ -8,6 +8,16 @@ using Discord.WebSocket;
 using Newtonsoft.Json;
 using ToNDiscBot.classes;
 
+
+//When adding a new dictionary and series of commands, follow these steps:
+//    1. Create the json to hold the data
+//    2. Create the class that is going to hold the live data
+//    3. Implement the interface on the class, and set class as public
+//    4. Create the dictionary that will hold the objects
+//    5. Add the ref of the dictionary to the SetUp() function
+//    6. Populate the dictionary in SetUp
+//    7. Add the command to the commands dictionary before leaving setup
+
 namespace ToNDiscBot
 {
     public class Program
@@ -18,6 +28,9 @@ namespace ToNDiscBot
         Dictionary<string, Dictionary<string, IBotCalls>> commands;
         Dictionary<string, Character> characters;
         Dictionary<string, BotHelp> help;
+        Dictionary<string, Episode> episodes;
+
+        static string prefix = $"~";
 
 
         public static void Main(string[] args)
@@ -33,7 +46,7 @@ namespace ToNDiscBot
                 //LogLegel = LogSeverity.Info
             });
 
-            SetUp(ref botConfig, ref characters, ref commands, ref help);
+            SetUp(ref botConfig, ref characters, ref commands, ref help, ref episodes);
 
             client.Log += Log;
             string token = botConfig.Token;
@@ -55,15 +68,11 @@ namespace ToNDiscBot
 
         private async Task MessageReceived(SocketMessage message)
         {
-            if (message.Content.StartsWith("^"))
+            if (message.Content.StartsWith(prefix))
             {
                 string msg = message.Content.Substring(1).ToLower();
 
                 string[] substring = msg.Split(" ", 2);
-                //foreach (string s in substring)
-                //{
-                //    Console.WriteLine(s);
-                //}
 
                 //Makes it here
                 if (substring.Length != 1)
@@ -87,9 +96,16 @@ namespace ToNDiscBot
                             else if (substring[1].ToLower().Equals("list"))
                             {
                                 string listOutput = "```\n";
+                                int tabs = 0;
                                 foreach (KeyValuePair<string, IBotCalls> key in dict)
                                 {
-                                    listOutput += $"{key.Key.ToString()}\n";
+                                    listOutput += $"{key.Key.ToString()}\t";
+                                    tabs++;
+                                    if(tabs == 5)
+                                    {
+                                        listOutput += $"\n";
+                                        tabs = 0;
+                                    }
                                 }
                                 listOutput += "```";
                                 await message.Channel.SendMessageAsync(listOutput);
@@ -115,7 +131,7 @@ namespace ToNDiscBot
             }
         }
 
-        public static void SetUp(ref BotConfig bc, ref Dictionary<string, Character> chars, ref Dictionary<string, Dictionary<string, IBotCalls>> commands, ref Dictionary<string, BotHelp> help)
+        public static void SetUp(ref BotConfig bc, ref Dictionary<string, Character> chars, ref Dictionary<string, Dictionary<string, IBotCalls>> commands, ref Dictionary<string, BotHelp> help, ref Dictionary<string, Episode> episodes)
         {
             JsonTextReader reader;
             try
@@ -139,6 +155,16 @@ namespace ToNDiscBot
                 catch (Exception e)
                 {
                     Console.WriteLine($"Characters reading in error:\n\t{e.Message}");
+                }
+
+                try
+                {
+                    reader = new JsonTextReader(new StreamReader("json\\episodes.json"));
+                    episodes = JsonConvert.DeserializeObject<Dictionary<string, Episode>>(File.ReadAllText("json\\episodes.json"));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Episodes reading in error:\n\t{e.Message}");
                 }
 
                 Dictionary<string, IBotCalls> charTemp = new Dictionary<string, IBotCalls>();
@@ -185,6 +211,21 @@ namespace ToNDiscBot
                     Console.WriteLine($"commands.Add botHelp Level Error:\n\t{e}");
                 }
 
+                // loop through IBotCalls for episodes
+                Dictionary<string, IBotCalls> episodetemp = new Dictionary<string, IBotCalls>();
+                foreach (KeyValuePair<string, Episode> kvp in episodes)
+                {
+                    episodetemp.Add(kvp.Key, kvp.Value);
+                }
+                try
+                {
+                    commands.TryAdd("ep", episodetemp);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"commands.Add episode Level Error:\n\t{e}");
+                }
+
             }
             catch (Exception e)
             {
@@ -196,12 +237,12 @@ namespace ToNDiscBot
         {
             var builder = new EmbedBuilder()
             {
-                Color = Color.Blue,
+                Color = Color.Gold,
                 Title = "ToN Help",
-                Description = $"Use ^help <command> for a description of what parameters that command can take",
+                Description = $"Use {prefix}help <command> for a description of what parameters that command can take",
                 Timestamp = DateTimeOffset.Now,
             }
-                            .AddField($"Example: ", $"``^help char``\n``^help list``");
+                            .AddField($"Example:\n", $"``{prefix}help list`` to show all help commands\n``{prefix}help char`` to see the char command help");
 
             await msg.Channel.SendMessageAsync(string.Empty, false, builder.Build());
         }

@@ -1,7 +1,10 @@
 {
   "char": {
-    "HelpDescription": "``^char <name>``: Displays the information about the character\nYou can use ranom in place of name to select a random character",
-    "HelpExample": "``^char armitage``\n``^char random``"
+    "HelpDescription": "``~char <name>``: Displays the information about the character\nYou can use ranom in place of name to select a random character",
+    "HelpExample": "``~char armitage``\n``~char random``"
+  },
+  "ep": {
+    "HelpDescription": "``~ep <number>``: Displays the information about the episode",
+    "HelpExample": "``~ep 01``\n``~ep 03``"
   }
-
 }

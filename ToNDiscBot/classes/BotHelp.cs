@@ -15,8 +15,8 @@ namespace ToNDiscBot
         {
             var builder = new EmbedBuilder()
             {
-                Color = Color.Blue,
-                Title = "ToN Help",
+                Color = Color.Red,
+                Title = "Tales of Nowhere Help",
                 Description = $"{this.HelpDescription}",
                 Timestamp = DateTimeOffset.Now,
             }
