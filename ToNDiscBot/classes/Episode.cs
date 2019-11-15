@@ -26,7 +26,7 @@ namespace ToNDiscBot.classes
                 //ImageUrl = $"{this.ImageUrl}",
                 Timestamp = DateTimeOffset.Now,
             }
-                            .WithFooter(footer => footer.Text = $"Ruleset: {this.RuleSet}")
+                            .WithFooter(footer => footer.Text = $"Rule set: {this.RuleSet}")
                             .AddField("Key NPCs: ", $"{this.NPCs}")
                             .AddField($"Episode Length:", $"{this.EpisodeLength}");
 

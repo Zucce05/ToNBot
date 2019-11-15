@@ -21,6 +21,29 @@
     "EpisodeLength": "35:39",
     //"ImageUrl": "https://cdn.discordapp.com/attachments/540649641193242635/644340860930228224/Armitage.png",
     "NPCs": "Bubda;",
-    "Ruleset":  "Dungeons and Dragons 5e"
+    "Ruleset": "Dungeons and Dragons 5e"
+  },
+  "4": {
+    "EpisodeTitle": "S1E04 - Bullet in the Gullet",
+    "EpisodeDescription": "After a long night of restless sleep and drunk texting, The Players decide to resupply before heading out to the Kingdom of Ishmarr, with no other choice but to use weapons and armor they'd normally find primitive. It's going to be a long,  difficult road. And hey, what exactly did the Guard Captain mean when he said The Underdark is rising? They'll find out this episode, and it'll only cost the low, low price of their own blood.",
+    "EpisodeLength": "49:18",
+    "NPCs": "",
+    "Ruleset": "Dungeons and Dragons 5e"
+  },
+  "5": {
+    "EpisodeTitle": "S1E05 - Fantasy London",
+    "EpisodeDescription": "The Players split off while awaiting their audience with the King in Ishmarr. And you know, it's a pretty normal day. Except for leaping rooftop to rooftop, revealing secret identities, and eating a bunch of food. Oh wait, that last one is pretty normal",
+    "EpisodeLength": "48:46",
+    "NPCs": "",
+    "Ruleset": "Dungeons and Dragons 5e"
   }
 }
+
+
+//"3": {
+//  "EpisodeTitle": "",
+//  "EpisodeDescription": "",
+//  "EpisodeLength": "",",
+//  "NPCs": "",
+//  "Ruleset": ""
+//}
